@@ -1,3 +1,5 @@
 venv/
 *.pkl
 __pycache__/
+*.jpg
+*.txt

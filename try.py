@@ -2,7 +2,9 @@ import utils
 import numpy as np
 
 extractor = utils.DualFeatureExtractor()
-features = extractor.extract_batch("./image_data/")
+
+features = extractor.extract_batch("./cropped_images/")
+# features = extractor.extract_batch("./image_data/")
 
 vlad = utils.DualVLADBuFF(n_clusters=128)
 vlad.fit(features)
@@ -12,7 +14,9 @@ vlad.save("dual_vlad.pkl")
 utils.save_features(vlad_vectors, "dual_features.pkl")
 
 
-query_features = extractor.extract("./target_image/team3.jpg")
+query_features = extractor.extract("cropped_images_target/team3_crop_3.jpg")
+# query_features = extractor.extract("target_image/team3.jpg")
+
 query_global = vlad._compute_vlad(query_features['global'], vlad.global_kmeans)
 query_local = vlad._compute_vlad(query_features['local'], vlad.local_kmeans)
 query_vec = np.concatenate([query_global, query_local])

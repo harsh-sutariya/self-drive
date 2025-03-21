@@ -17,11 +17,9 @@ class DualFeatureExtractor:
         self.model.to(self.device).eval()
         
         self.transform = transforms.Compose([
-            transforms.Resize(252),
-            # transforms.CenterCrop(224),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], 
-                                 std=[0.229, 0.224, 0.225]),
+                               std=[0.229, 0.224, 0.225]),
         ])
         
         self.patch_size = self.model.patch_size
@@ -48,8 +46,27 @@ class DualFeatureExtractor:
         return features
 
     def _process_image(self, img: Image.Image) -> dict:
-        """Internal processing pipeline returning both feature types"""
+        """Enhanced preprocessing with dimension validation"""
         img = img.convert('RGB')
+        original_w, original_h = img.size
+        
+        # Resize to maintain aspect ratio with shortest side 252
+        t_h, t_w = (252, int(252*(original_h/original_w))) if original_w > original_h \
+                 else (int(252*(original_w/original_h)), 252)
+        
+        img = transforms.functional.resize(img, (t_h, t_w))
+        
+        # Calculate padding needs
+        def _pad_spec(x): 
+            pad = (14 - (x % 14)) % 14
+            return (pad//2, pad - pad//2)
+        
+        w_pad = _pad_spec(img.width)
+        h_pad = _pad_spec(img.height)
+        
+        # Apply symmetric padding
+        img = transforms.functional.pad(img, (w_pad[0], h_pad[0], w_pad[1], h_pad[1]), fill=0)
+        
         tensor = self.transform(img).unsqueeze(0).to(self.device)
         
         with torch.no_grad():
