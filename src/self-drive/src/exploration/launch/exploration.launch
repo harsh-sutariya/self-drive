@@ -3,6 +3,12 @@
     <arg name="bag_filename" default="default_name.bag" 
          doc="Output filename for rosbag recording (relative to workspace root)"/>
     
+    <!-- Print the bag file path -->
+    <node pkg="rostopic" type="rostopic" name="print_bag_path" 
+          args="echo /bag_path"
+          output="screen"
+          launch-prefix="echo 'Bag will be saved at: $(find exploration)/../../../../bags/$(arg bag_filename)' && "/>
+    
     <!-- 1. Rosbag Recording with relative path -->
     <node pkg="rosbag" type="record" name="exploration_bag" 
           args="record -o $(find exploration)/../../../../bags/$(arg bag_filename)
