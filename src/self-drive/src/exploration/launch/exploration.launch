@@ -5,9 +5,8 @@
     
     <!-- Print the bag file path -->
     <node pkg="rostopic" type="rostopic" name="print_bag_path" 
-          args="echo /bag_path"
-          output="screen"
-          launch-prefix="echo 'Bag will be saved at: $(find exploration)/../../../../bags/$(arg bag_filename)' && "/>
+          args="pub -1 /bag_path std_msgs/String 'Bag will be saved at: $(find exploration)/../../../../$(arg bag_filename)'"
+          output="screen"/>
     
     <!-- 1. Rosbag Recording with relative path -->
     <node pkg="rosbag" type="record" name="exploration_bag" 
