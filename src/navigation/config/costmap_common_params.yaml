@@ -1,0 +1,35 @@
+# Parameters shared by global and local costmaps
+# Ensure these frame names match your robot's TF tree
+odom_frame: odom
+base_frame: base_link
+map_type: costmap
+
+# Robot footprint specification (simple circular footprint)
+# Adjust dimensions based on your actual robot
+# footprint: [[-0.105, -0.105], [-0.105, 0.105], [0.041, 0.105], [0.041, -0.105]] # Example for TurtleBot3 Burger
+robot_radius: 0.18 # Use radius for simpler configuration if footprint is not critical
+
+# Inflation layer parameters
+inflation_layer:
+  enabled: true
+  cost_scaling_factor: 10.0  # Exponential rate at which the cost drops off
+  inflation_radius: 0.55 # Inflate obstacles by this radius (meters)
+
+# Obstacle layer using projected map data from RTAB-Map
+# This assumes RTAB-Map is publishing a point cloud suitable for obstacle detection
+obstacle_layer:
+  enabled: true
+  obstacle_range: 2.5
+  raytrace_range: 3.0
+  observation_sources: point_cloud_sensor
+  point_cloud_sensor: {
+    sensor_frame: base_link, # Frame of the sensor data origin (adjust if needed)
+    data_type: PointCloud2,
+    topic: /rtabmap/cloud_map, # Topic where RTAB-Map publishes the cloud
+    marking: true,
+    clearing: true,
+    min_obstacle_height: 0.0,
+    max_obstacle_height: 0.5 # Assume obstacles are below this height
+  }
+
+# Other layers can be added here if needed (e.g., Voxel layer, Static map layer for global) 

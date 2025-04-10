@@ -1,0 +1,16 @@
+local_costmap:
+  global_frame: odom        # Frame for the local map (often odom)
+  robot_base_frame: base_link # Frame for the robot's base
+  update_frequency: 10.0    # Higher update frequency for local reactions
+  publish_frequency: 5.0     # Higher publish frequency for local view
+  static_map: false         # Local map doesn't use the static map directly
+  rolling_window: true      # Keep the robot centered in the local map
+  width: 3.0                # Width of the local map in meters
+  height: 3.0               # Height of the local map in meters
+  resolution: 0.05          # Resolution of the local map (meters/cell)
+  transform_tolerance: 0.5  # Allow up to 0.5 seconds delay on transforms
+
+  # Inherit common plugins
+  plugins:
+    - {name: obstacle_layer,  type: "costmap_2d::ObstacleLayer"}
+    - {name: inflation_layer, type: "costmap_2d::InflationLayer"} 

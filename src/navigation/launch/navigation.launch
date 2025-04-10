@@ -1,0 +1,45 @@
+<launch>
+  <!-- Argument for map file (can be used if not using SLAM map directly) -->
+  <arg name="map_file" default="$(find navigation)/maps/my_map.yaml"/> 
+
+  <!-- Run the map server if using a pre-saved map -->
+  <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/> -->
+
+  <!-- Run move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <!-- Load common costmap parameters -->
+    <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    
+    <!-- Load specific costmap parameters -->
+    <rosparam file="$(find navigation)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find navigation)/config/global_costmap_params.yaml" command="load" />
+    
+    <!-- Load local planner parameters -->
+    <rosparam file="$(find navigation)/config/base_local_planner_params.yaml" command="load" />
+
+    <!-- Set the base local planner -->
+    <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+    
+    <!-- Set the base global planner (default: navfn/NavfnROS) -->
+    <!-- <param name="base_global_planner" value="global_planner/GlobalPlanner"/> -->
+
+    <!-- Remap cmd_vel topic if necessary -->
+    <remap from="cmd_vel" to="/cmd_vel"/>
+    <!-- Remap odom topic if necessary -->
+    <remap from="odom" to="/odom"/>
+    <!-- Remap map topic if it's different from /map -->
+    <!-- <remap from="map" to="/map"/> -->
+  </node>
+
+  <!-- Optional: Add AMCL for localization if running separately from SLAM -->
+  <!-- 
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <rosparam file="$(find navigation)/config/amcl_params.yaml" command="load" />
+    <param name="initial_pose_x"            value="0.0"/>
+    <param name="initial_pose_y"            value="0.0"/>
+    <param name="initial_pose_a"            value="0.0"/>
+  </node>
+  -->
+
+</launch>

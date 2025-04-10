@@ -1,0 +1,69 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="use_sim_time" default="false"/>
+  <arg name="localization" default="false"/>
+  <arg name="database_path" default="~/.ros/rtabmap.db"/>
+  <arg name="rtabmap_args" default=""/>
+  <arg name="output" default="screen"/>
+  <arg name="rgb_topic" default="/camera/image" />
+  <arg name="odom_topic" default="/odom" />
+  <arg name="frame_id" default="base_link" /> <!-- Adjust if your robot's base frame is different -->
+  <arg name="approx_sync" default="true"/>
+
+  <!-- RTAB-Map node -->
+  <group ns="rtabmap">
+    <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="$(arg output)" args="$(arg rtabmap_args)">
+      <!-- Basic RTAB-Map Parameters -->
+      <param name="database_path"       type="string" value="$(arg database_path)"/>
+      <param name="frame_id"            type="string" value="$(arg frame_id)"/>
+      <param name="odom_frame_id"       type="string" value="odom"/> <!-- Adjust if your odom frame is different -->
+      <param name="use_sim_time"        type="bool"   value="$(arg use_sim_time)"/>
+      <param name="subscribe_depth"     type="bool"   value="false"/>
+      <param name="subscribe_rgb"       type="bool"   value="true"/>
+      <param name="subscribe_scan"      type="bool"   value="false"/>
+      <param name="subscribe_scan_cloud" type="bool"  value="false"/>
+      <param name="subscribe_user_data" type="bool"   value="false"/>
+      <param name="subscribe_odom_info" type="bool"   value="false"/>
+      <param name="approx_sync"         type="bool"   value="$(arg approx_sync)"/>
+
+      <!-- Input topics -->
+      <remap from="rgb/image"       to="$(arg rgb_topic)"/>
+      <remap from="odom"            to="$(arg odom_topic)"/>
+
+      <!-- Output topics -->
+      <remap from="grid_map" to="/map"/> <!-- Remap grid_map to /map for navigation -->
+
+      <!-- RTAB-Map Core Parameters -->
+      <param name="Reg/Strategy"                  type="string" value="1"/> <!-- 0=Visual, 1=ICP -->
+      <param name="Reg/Force3DoF"                 type="string" value="true"/> <!-- 2D SLAM -->
+      <param name="Optimizer/GravitySigma"        type="string" value="0"/> <!-- Disable imu constraints if not available -->
+
+      <!-- Visual SLAM Parameters -->
+      <param name="Vis/EstimationType"            type="string" value="0"/> <!-- 0=Frame-to-Map, 1=Frame-to-Frame -->
+      <param name="Vis/MinInliers"                type="string" value="15"/>
+      <param name="Vis/MaxFeatures"               type="string" value="1000"/>
+      <param name="Vis/CorGuessWinSize"           type="string" value="0"/> <!-- Disable guess window, rely on odom -->
+      <param name="Vis/CorNNType"                 type="string" value="4"/> <!-- Corresponding NN strategy -->
+      <param name="Vis/FeatureType"               type="string" value="6"/> <!-- ORB -->
+      <param name="Vis/BundleAdjustment"          type="string" value="1"/> <!-- Global BA -->
+
+      <!-- Loop Closure Parameters -->
+      <param name="RGBD/OptimizeFromGraphEnd"     type="string" value="false"/>
+
+      <!-- Grid Map Parameters -->
+      <param name="Grid/FromDepth"                type="bool" value="false"/> <!-- Use point cloud projection -->
+      <param name="Grid/RayTracing"               type="bool" value="true"/> <!-- Project points for occupancy grid -->
+      <param name="Grid/ProjMaxGroundAngle"       type="double" value="45"/>
+      <param name="Grid/ProjMaxHeight"            type="double" value="2.0"/>
+      <param name="Grid/ProjMapFrame"             type="bool" value="true"/>
+      <param name="Grid/RangeMax"                 type="double" value="5.0"/> <!-- Limit ray tracing range -->
+      <param name="Grid/ClusterRadius"            type="double" value="0.1"/>
+      <param name="Grid/MinClusterSize"           type="int" value="3"/>
+
+      <!-- Localization Mode -->
+      <param name="Mem/IncrementalMemory"         type="string" value="$(eval not arg('localization'))"/>
+      <param name="Mem/InitWMWithPose"         type="string" value="$(arg localization)"/>
+
+    </node>
+  </group>
+</launch> 

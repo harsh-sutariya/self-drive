@@ -1,0 +1,18 @@
+global_costmap:
+  global_frame: map         # Frame for the global map
+  robot_base_frame: base_link # Frame for the robot's base
+  update_frequency: 5.0     # Frequency in Hz to update the map
+  publish_frequency: 2.0    # Frequency in Hz to publish the map visualization
+  static_map: true          # Use the static map from the SLAM system
+  transform_tolerance: 0.5  # Allow up to 0.5 seconds delay on transforms
+
+  # Inherit common plugins
+  plugins:
+    - {name: static_layer,    type: "costmap_2d::StaticLayer"}
+    - {name: obstacle_layer,  type: "costmap_2d::ObstacleLayer"}
+    - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+
+  # Static layer configuration (using the map from RTAB-Map)
+  static_layer:
+    enabled: true
+    map_topic: /map  # Subscribe to the map topic from RTAB-Map 
