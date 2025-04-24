@@ -1,0 +1,10 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="target_image_path" default="$(find hybrid_navigation)/target.jpg"
+       doc="Path to the target image for navigation"/>
+  
+  <!-- Best Match Viewer Node -->
+  <node pkg="hybrid_navigation" type="view_best_match.py" name="best_match_viewer" output="screen">
+    <param name="target_image_path" value="$(arg target_image_path)"/>
+  </node>
+</launch> 

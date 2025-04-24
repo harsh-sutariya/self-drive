@@ -1,0 +1,41 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="map_path" default="$(find hybrid_navigation)/maps/topological_map.pkl"
+       doc="Path to the topological map"/>
+  <arg name="database_path" default="$(find hybrid_navigation)/maps/vpr_database.pkl"
+       doc="Path to the visual place recognition database"/>
+  <arg name="matches_dir" default="$(find hybrid_navigation)/maps/matches"
+       doc="Directory to store best match images"/>
+  <arg name="linear_speed" default="0.2" doc="Maximum linear speed (m/s)"/>
+  <arg name="angular_speed" default="0.5" doc="Maximum angular speed (rad/s)"/>
+  <arg name="connection_threshold" default="0.3" doc="Maximum distance to connect nodes in the topological map (m)"/>
+  <arg name="navigation_mode" default="false" doc="Set to true for navigation mode, false for exploration mode"/>
+  
+  <!-- Create maps directory -->
+  <node pkg="hybrid_navigation" type="create_maps_dir.sh" name="create_maps_dir" output="screen"/>
+  
+  <!-- RViz for Visualization -->
+  <node pkg="rviz" type="rviz" name="navigation_rviz" 
+        args="-d $(find hybrid_navigation)/config/navigation.rviz"
+        required="true"/>
+  
+  <!-- Visual Place Recognition Node -->
+  <node pkg="hybrid_navigation" type="visual_place_recognition.py" name="visual_place_recognition" output="screen">
+    <param name="database_path" value="$(arg database_path)"/>
+    <param name="matches_dir" value="$(arg matches_dir)"/>
+  </node>
+  
+  <!-- Topological Mapper Node -->
+  <node pkg="hybrid_navigation" type="topological_mapper.py" name="topological_mapper" output="screen">
+    <param name="map_path" value="$(arg map_path)"/>
+    <param name="connection_threshold" value="$(arg connection_threshold)"/>
+    <param name="navigation_mode" value="$(arg navigation_mode)"/>
+  </node>
+  
+  <!-- Teleop for Manual Control -->
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+  
+  <!-- Save Map Service Node -->
+  <node pkg="hybrid_navigation" type="save_map.py" name="save_map" output="screen"/>
+  
+</launch> 

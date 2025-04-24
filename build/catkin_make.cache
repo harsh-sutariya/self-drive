@@ -1,0 +1,2 @@
+self-drive/src/exploration:self-drive/src/hybrid_navigation:self-drive/src/navigation:self-drive/src/turtlebot3_teleop
+-DCATKIN_DEVEL_PREFIX=/home/ai4ce/team3-deploy/catkin_s25/devel -DCMAKE_INSTALL_PREFIX=/home/ai4ce/team3-deploy/catkin_s25/install -G Unix Makefiles

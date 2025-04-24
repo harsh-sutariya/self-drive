@@ -1,0 +1,8 @@
+prefix=/home/ai4ce/team3-deploy/catkin_s25/install
+
+Name: hybrid_navigation
+Description: Description of hybrid_navigation
+Version: 0.1.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: rospy std_msgs geometry_msgs nav_msgs sensor_msgs cv_bridge message_runtime

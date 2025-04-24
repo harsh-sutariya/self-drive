@@ -1,0 +1,35 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="bag_filename" default="custom_name.bag" 
+       doc="Output filename for rosbag recording (relative to workspace root)"/>
+  <arg name="map_path" default="$(find hybrid_navigation)/maps/topological_map.pkl"
+       doc="Path to save the topological map"/>
+  <arg name="database_path" default="$(find hybrid_navigation)/maps/vpr_database.pkl"
+       doc="Path to save the visual place recognition database"/>
+  
+  <!-- Create maps directory -->
+  <node pkg="hybrid_navigation" type="create_maps_dir.sh" name="create_maps_dir" output="screen"/>
+  
+  <!-- Rosbag Recording -->
+  <node pkg="rosbag" type="record" name="exploration_bag" 
+        args="record -o $(find hybrid_navigation)/maps/$(arg bag_filename)
+              /odom /camera/image /cmd_vel"/>
+  
+  <!-- RViz for Visualization -->
+  <node pkg="rviz" type="rviz" name="exploration_rviz" 
+        args="-d $(find hybrid_navigation)/config/exploration.rviz"
+        required="true"/>
+  
+  <!-- Teleop for Manual Control -->
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+  
+  <!-- Visual Place Recognition Node -->
+  <node pkg="hybrid_navigation" type="visual_place_recognition.py" name="visual_place_recognition" output="screen">
+    <param name="database_path" value="$(arg database_path)"/>
+  </node>
+  
+  <!-- Topological Mapper Node -->
+  <node pkg="hybrid_navigation" type="topological_mapper.py" name="topological_mapper" output="screen">
+    <param name="map_path" value="$(arg map_path)"/>
+  </node>
+</launch> 

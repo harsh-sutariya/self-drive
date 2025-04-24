@@ -1,0 +1,44 @@
+# Parameters for the TrajectoryPlannerROS (base_local_planner)
+TrajectoryPlannerROS:
+  # Robot Configuration Parameters
+  acc_lim_x: 1.0       # Max X acceleration
+  acc_lim_y: 0.0       # Max Y acceleration (usually 0 for non-holonomic)
+  acc_lim_theta: 1.5   # Max rotational acceleration
+  max_vel_x: 0.3       # Max X velocity
+  min_vel_x: 0.1       # Min X velocity (can be 0 if robot stops)
+  max_vel_y: 0.0       # Max Y velocity (usually 0 for non-holonomic)
+  min_vel_y: 0.0       # Min Y velocity (usually 0 for non-holonomic)
+  max_vel_theta: 0.8   # Max rotational velocity
+  min_vel_theta: -0.8  # Min rotational velocity (negative allows backward rotation)
+  min_in_place_vel_theta: 0.4 # Min rotational velocity for in-place turns
+
+  # Goal Tolerance Parameters
+  xy_goal_tolerance: 0.15  # Tolerance in meters for reaching the goal XY position
+  yaw_goal_tolerance: 0.2  # Tolerance in radians for reaching the goal orientation
+  latch_xy_goal_tolerance: false
+
+  # Forward Simulation Parameters
+  sim_time: 1.0        # Time in seconds to simulate trajectories forward
+  sim_granularity: 0.025 # Step size in meters between points on the trajectory
+  angular_sim_granularity: 0.025 # Step size in radians between angles for trajectory generation
+  vx_samples: 6        # Number of samples for X velocity during simulation
+  vtheta_samples: 20   # Number of samples for rotational velocity during simulation
+
+  # Trajectory Scoring Parameters
+  path_distance_bias: 32.0  # Weight for staying close to the global path
+  goal_distance_bias: 24.0  # Weight for getting closer to the local goal
+  occdist_scale: 0.02       # Weight for avoiding obstacles (increase for more caution)
+  forward_point_distance: 0.325 # Distance ahead to look for the local goal point
+  stop_time_buffer: 0.2     # Time to wait before declaring an oscillation
+  scaling_speed: 0.25       # Speed at which to scale the robot's footprint
+  max_scaling_factor: 0.2   # Max factor to scale the robot's footprint
+
+  # Oscillation Prevention Parameters
+  oscillation_reset_dist: 0.05 # Distance moved to reset oscillation flags
+
+  # Other Parameters
+  holonomic_robot: false  # Set to true if your robot can move sideways
+  meter_scoring: true     # Score trajectories based on distance in meters
+
+  # DWA (Dynamic Window Approach) - Set to true to use DWA planner instead of Trajectory Rollout
+  # dwa: true 
